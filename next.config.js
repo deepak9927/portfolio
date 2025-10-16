@@ -4,7 +4,7 @@ const nextConfig = {
     domains: [
       'uploadthing.com',
       'utfs.io',
-      'img.clerk.com',
+      'cloud.appwrite.io',
       'subdomain',
       'files.stripe.com',
     ],

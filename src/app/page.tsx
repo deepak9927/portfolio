@@ -1,13 +1,15 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { 
-  Github, Linkedin, Mail, Code2, Database, Server, Brain, 
-  Cpu, Globe, Cloud, Lock, Settings, Terminal, Layers,
-  Smartphone, TestTube, GitBranch, Shield, Workflow
+  Github, Linkedin, Mail, Code2, Database, Server, 
+  Cpu, Globe, Cloud, Rocket, Sparkles, Trophy,
+  Brain, Zap, Target, BookOpen, Users, LogIn
 } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 
 interface FloatingIcon {
@@ -17,18 +19,13 @@ interface FloatingIcon {
   speed: number;
   direction: number;
 }
-interface Skill {
-    title: string;
-    description: string;
-    icon: JSX.Element;
-    technologies: string[];
-    isStrong?: boolean; // Flag for strong vs weak skills
-  }
+
 export default function Home() {
+  const { user, logout } = useAuth();
   const [floatingIcons, setFloatingIcons] = useState<FloatingIcon[]>([]);
 
   useEffect(() => {
-    const icons = [Cpu, Globe, Cloud, Lock, Settings, Terminal].map((Icon) => ({
+    const icons = [Cpu, Globe, Cloud, Rocket, Sparkles, Trophy, Brain, Zap, Target, BookOpen, Users].map((Icon) => ({
       icon: <Icon className="w-8 h-8 text-primary/20" />,
       x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
       y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1000),
@@ -65,78 +62,65 @@ export default function Home() {
     };
   }, []);
 
-  const skills: Skill[] = [
+  const skills = [
     {
-      title: "Frontend Excellence",
-      description: "Building modern, responsive web apps",
-      icon: <Code2 className="w-10 h-10 mb-4 text-primary" />,
-      technologies: ["React.js", "Next.js 13+", "TypeScript", "Tailwind CSS", "Redux"],
-      isStrong: true,
+      title: "React Master",
+      description: "Building interactive UIs",
+      icon: <Code2 className="w-10 h-10" />,
+      color: "from-blue-500 to-cyan-500",
+      bgColor: "bg-blue-500/10",
+      borderColor: "border-blue-500/50",
+      technologies: ["React.js", "Hooks", "Context API", "Redux"],
     },
     {
-      title: "Backend Development",
-      description: "Scalable and secure server-side solutions",
-      icon: <Server className="w-10 h-10 mb-4 text-primary" />,
-      technologies: ["Node.js", "Express.js", "Python", "Django", "FastAPI"],
-      isStrong: true,
+      title: "Next.js Pro",
+      description: "Server & Client rendering",
+      icon: <Server className="w-10 h-10" />,
+      color: "from-purple-500 to-pink-500",
+      bgColor: "bg-purple-500/10",
+      borderColor: "border-purple-500/50",
+      technologies: ["Next.js 15", "App Router", "Server Actions", "SSR"],
     },
     {
-      title: "Database & Storage",
-      description: "Efficient data management",
-      icon: <Database className="w-10 h-10 mb-4 text-primary" />,
-      technologies: ["MongoDB", "PostgreSQL", "Redis", "Prisma"],
-      isStrong: true,
+      title: "Database Guru",
+      description: "Data management expert",
+      icon: <Database className="w-10 h-10" />,
+      color: "from-green-500 to-emerald-500",
+      bgColor: "bg-green-500/10",
+      borderColor: "border-green-500/50",
+      technologies: ["MongoDB", "PostgreSQL", "Prisma", "Redis"],
     },
     {
-      title: "Cloud Services",
-      description: "Cloud deployment and management",
-      icon: <Cloud className="w-10 h-10 mb-4 text-primary" />,
+      title: "Cloud Architect",
+      description: "Scalable deployments",
+      icon: <Cloud className="w-10 h-10" />,
+      color: "from-orange-500 to-yellow-500",
+      bgColor: "bg-orange-500/10",
+      borderColor: "border-orange-500/50",
       technologies: ["AWS", "Vercel", "Docker", "CI/CD"],
-      isStrong: true,
     },
     {
-      title: "Frontend Alternatives",
-      description: "Familiar but less experienced",
-      icon: <Code2 className="w-10 h-10 mb-4 text-muted-foreground" />,
-      technologies: ["Vue.js", "Angular"],
-      isStrong: false,
+      title: "TypeScript Ninja",
+      description: "Type-safe development",
+      icon: <Zap className="w-10 h-10" />,
+      color: "from-indigo-500 to-blue-500",
+      bgColor: "bg-indigo-500/10",
+      borderColor: "border-indigo-500/50",
+      technologies: ["TypeScript", "Type Safety", "Generics", "Advanced Types"],
     },
     {
-      title: "Java Ecosystem",
-      description: "Basic knowledge",
-      icon: <Server className="w-10 h-10 mb-4 text-muted-foreground" />,
-      technologies: ["Java", "Spring"],
-      isStrong: false,
+      title: "Full Stack Dev",
+      description: "End-to-end solutions",
+      icon: <Target className="w-10 h-10" />,
+      color: "from-pink-500 to-rose-500",
+      bgColor: "bg-pink-500/10",
+      borderColor: "border-pink-500/50",
+      technologies: ["MERN", "Node.js", "Express", "API Design"],
     },
   ];
 
-  // Animation Variants
-  const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { staggerChildren: 0.2, delayChildren: 0.3 },
-    },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: (isStrong: boolean) => ({
-      opacity: 1,
-      scale: isStrong ? 1 : 0.95, // Slightly smaller for weak skills
-      transition: { duration: 0.5 },
-    }),
-    hover: (isStrong: boolean) => ({
-      scale: isStrong ? 1.05 : 1, // Bigger hover for strong skills
-      transition: { duration: 0.3 },
-    }),
-  };
-
-
-
   return (
-    <main className="min-h-screen bg-background relative overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-br from-codedex-950 via-codedex-900 to-codedex-950 text-white relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none">
         {floatingIcons.map((floatingIcon, index) => (
           <div
@@ -152,77 +136,119 @@ export default function Home() {
         ))}
       </div>
 
-      <section className="container mx-auto px-4 py-20 flex flex-col items-center text-center relative">
-        <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
-          Full Stack Developer
+      <header className="relative z-10 flex justify-between items-center p-6 max-w-7xl mx-auto border-b border-codedex-700/50 bg-codedex-900/50 backdrop-blur-sm">
+        <Link href="/" className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-codedex-400 to-codedex-200">
+          DevQuest
+        </Link>
+        <nav className="flex items-center space-x-4">
+          <Link href="/quiz" className="text-codedex-300 hover:text-white transition-colors duration-200">
+            <Button variant="ghost" className="flex items-center gap-2 text-codedex-300 hover:text-white hover:bg-codedex-800">
+              <BookOpen className="h-4 w-4" /> Quizzes
+            </Button>
+          </Link>
+          {user ? (
+            <>
+              <span className="text-codedex-300">Welcome, {user.name || user.email}!</span>
+              <Button onClick={logout} variant="outline" className="text-white border-codedex-500 hover:bg-codedex-500/20">
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link href="/sign-in">
+                <Button variant="ghost" className="flex items-center gap-2 text-codedex-300 hover:text-white hover:bg-codedex-800">
+                  <LogIn className="h-4 w-4" /> Sign In
+                </Button>
+              </Link>
+              <Link href="/sign-up">
+                <Button className="bg-gradient-to-r from-codedex-500 to-codedex-300 hover:from-codedex-600 hover:to-codedex-400 text-white font-semibold">
+                  Sign Up
+                </Button>
+              </Link>
+            </>
+          )}
+        </nav>
+      </header>
+
+      <section className="container mx-auto px-4 py-20 flex flex-col items-center text-center relative z-10">
+        <Badge variant="secondary" className="mb-4 text-lg px-4 py-2 bg-codedex-600/20 text-codedex-300 border-codedex-500">
+          <Sparkles className="mr-2 h-4 w-4" /> Level Up Your Dev Skills
+        </Badge>
+        <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-codedex-400 to-codedex-600">
+          Deepak Thakur
         </h1>
-        <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mb-8">
-          Passionate about building modern web applications with cutting-edge technologies.
-          Experienced in MERN stack, Next.js, Python, and cloud services.
+        <p className="text-xl md:text-2xl text-codedex-300 max-w-3xl mb-10">
+          Passionate Full Stack Developer crafting robust and scalable web applications.
+          Specializing in modern frameworks and cloud solutions.
         </p>
-        <div className="flex gap-4 mb-12">
-          <Button asChild>
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
+          <Button asChild size="lg" className="bg-gradient-to-r from-codedex-500 to-codedex-300 hover:from-codedex-600 hover:to-codedex-400 text-white font-semibold">
             <Link href="mailto:deepakthakur9927@gmail.com">
-              <Mail className="mr-2 h-4 w-4" /> Contact Me
+              <Mail className="mr-2 h-5 w-5" /> Contact Me
             </Link>
           </Button>
-          <Button variant="outline" asChild>
+          <Button variant="outline" size="lg" asChild className="text-white border-codedex-500 hover:bg-codedex-500/20">
             <Link href="https://github.com/deepak9927" target="_blank">
-              <Github className="mr-2 h-4 w-4" /> GitHub
+              <Github className="mr-2 h-5 w-5" /> GitHub
             </Link>
           </Button>
-          <Button variant="outline" asChild>
+          <Button variant="outline" size="lg" asChild className="text-white border-codedex-500 hover:bg-codedex-500/20">
             <Link href="https://www.linkedin.com/in/deepak-thakur-304b2a186" target="_blank">
-              <Linkedin className="mr-2 h-4 w-4" /> LinkedIn
+              <Linkedin className="mr-2 h-5 w-5" /> LinkedIn
             </Link>
           </Button>
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-20 bg-secondary/30 relative">
-        <h2 className="text-3xl font-bold text-center mb-16">Technical Expertise</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="container mx-auto px-4 py-20 relative z-10">
+        <h2 className="text-4xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-codedex-400 to-codedex-500">
+          My Expertise
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {skills.map((skill) => (
-            <Card key={skill.title} className="hover:shadow-lg transition-shadow duration-300">
-              <div className="flex flex-col items-center">
-                {skill.icon}
-                <h3 className="text-xl font-semibold mt-2" aria-label={skill.title}>{skill.title}</h3>
-                <p className="text-center mt-1">{skill.description}</p>
-                <ul className="mt-2">
+            <Card key={skill.title} className={`p-6 border border-codedex-700 bg-codedex-900 hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-2`}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className={`text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r ${skill.color}`}>
+                  {skill.title}
+                </CardTitle>
+                <div className={`p-2 rounded-full bg-gradient-to-br ${skill.color}`}>
+                  {skill.icon}
+                </div>
+              </CardHeader>
+              <CardContent className="mt-4">
+                <CardDescription className="text-codedex-300 mb-4">
+                  {skill.description}
+                </CardDescription>
+                <div className="flex flex-wrap gap-2">
                   {skill.technologies.map((tech) => (
-                    <li key={tech} className="inline-block mr-2">{tech}</li>
+                    <Badge key={tech} variant="secondary" className="bg-codedex-700 text-codedex-200 hover:bg-codedex-600">
+                      {tech}
+                    </Badge>
                   ))}
-                </ul>
-                <a href="mailto:deepak9927kumarthakur@gmail.com" className="text-blue-500 mt-2">Contact Me</a>
-              </div>
+                </div>
+              </CardContent>
             </Card>
           ))}
         </div>
       </section>
 
-      <section className="mt-10">
-        <h2 className="text-2xl font-bold">Testimonials</h2>
-        <blockquote className="border-l-4 border-gray-300 pl-4 italic mt-4">
-          <p>"An exceptional developer with a keen eye for detail!" - Client A</p>
-        </blockquote>
-        <blockquote className="border-l-4 border-gray-300 pl-4 italic mt-4">
-          <p>"A pleasure to work with, always delivers on time!" - Client B</p>
-        </blockquote>
-      </section>
-
-      <section className="container mx-auto px-4 py-20 text-center relative">
-        <h2 className="text-3xl font-bold mb-6">Let's Build Something Amazing Together</h2>
-        <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-          I'm always interested in hearing about new projects and opportunities.
-          Whether you need a web application built from scratch or want to improve an existing one,
-          I'm here to help.
+      <section className="container mx-auto px-4 py-20 text-center relative z-10">
+        <h2 className="text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-codedex-400 to-codedex-500">
+          Ready for a Challenge?
+        </h2>
+        <p className="text-xl text-codedex-300 max-w-2xl mx-auto mb-8">
+          Test your knowledge with our interactive quizzes on React.js and Next.js!
         </p>
-        <Button size="lg" asChild>
-          <Link href="mailto:deepak9927kumarthakur@gmail.com">
-            Get In Touch
+        <Button size="lg" asChild className="bg-gradient-to-r from-codedex-500 to-codedex-300 hover:from-codedex-600 hover:to-codedex-400 text-white font-semibold">
+            <Link href="/quiz">
+            <Brain className="mr-2 h-5 w-5" /> Start Quizzing!
           </Link>
         </Button>
       </section>
+
+      <footer className="relative z-10 text-center py-10 text-codedex-500 border-t border-codedex-700/50 bg-codedex-900/50 backdrop-blur-sm">
+        <p>&copy; {new Date().getFullYear()} Deepak Thakur. All rights reserved.</p>
+      </footer>
     </main>
   );
 }
