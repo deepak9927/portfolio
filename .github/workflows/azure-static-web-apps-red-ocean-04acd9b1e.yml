@@ -35,6 +35,11 @@ jobs:
         run: |
           echo "--- package.json ---"
           cat package.json || true
+          echo "--- git HEAD and package.json from git ---"
+          git rev-parse --short HEAD || true
+          git show HEAD:package.json || true
+          echo "--- git status ---"
+          git status --porcelain || true
           echo "--- repo root listing ---"
           ls -la || true
 
@@ -74,8 +79,12 @@ jobs:
           action: "upload"
           app_location: "/" # App source code path
           api_location: "" # Api source code path - optional
+          # Let the action build the app instead of requiring a pre-built static `out` folder.
+          # This is needed because the project uses the Next.js App Router and cannot be
+          # fully exported with `next export`.
+          # If you prefer to pre-build locally, set skip_app_build: true and ensure `out` exists.
           output_location: "out" # Built app content directory - optional
-          skip_app_build: true
+          skip_app_build: false
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
