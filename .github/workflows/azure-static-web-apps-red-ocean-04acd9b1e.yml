@@ -49,6 +49,14 @@ jobs:
           # remove any lockfiles that could force npm ci or conflicting installs
           rm -f package-lock.json pnpm-lock.yaml yarn.lock
           rm -rf node_modules
+          # Try npm install with legacy-peer-deps first to avoid ERESOLVE from npm ci
+          npm ci --legacy-peer-deps || npm install --legacy-peer-deps || true
+
+          # Diagnostic: show if uploadthing or @uploadthing/react are present after npm install
+          echo "--- npm ls for uploadthing packages ---"
+          npm ls uploadthing @uploadthing/react --all || true
+
+          # Then run pnpm install to get expected pnpm environment (if you prefer pnpm tooling)
           pnpm install
       
       - name: Build Next.js app
