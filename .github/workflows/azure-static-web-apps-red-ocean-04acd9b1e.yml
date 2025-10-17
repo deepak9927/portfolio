@@ -26,7 +26,11 @@ jobs:
           node-version: '18'
       
       - name: Install dependencies
-        run: npm install
+        - name: Install pnpm
+          run: npm install -g pnpm
+
+        - name: Install dependencies
+          run: pnpm install
       
       - name: Build Next.js app
         run: npm run build
