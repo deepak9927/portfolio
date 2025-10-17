@@ -28,8 +28,19 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Show package.json (diagnostic)
+        run: |
+          echo "--- package.json ---"
+          cat package.json || true
+          echo "--- repo root listing ---"
+          ls -la || true
+
+      - name: Install dependencies (clean)
+        run: |
+          # remove any lockfiles that could force npm ci or conflicting installs
+          rm -f package-lock.json pnpm-lock.yaml yarn.lock
+          rm -rf node_modules
+          pnpm install
       
       - name: Build Next.js app
         run: npm run build
