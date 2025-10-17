@@ -1,30 +1,21 @@
 {
-  "navigationFallback": {
-    "rewrite": "/index.html",
-    "exclude": ["/assets/*", "/*.{css,scss,js,png,gif,ico,jpg,svg,json}"]
-  },
   "routes": [
     {
-      "route": "/_next/*",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      }
-    },
-    {
-      "route": "/assets/*",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      }
+      "route": "/*",
+      "serve": "/index.html",
+      "statusCode": 200
     }
   ],
+  "navigationFallback": {
+    "rewrite": "/404.html"
+  },
   "globalHeaders": {
     "content-security-policy": "default-src 'self' https://cloud.appwrite.io; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://cloud.appwrite.io;"
   },
-  "responseOverrides": {
-    "404": {
-      "rewrite": "/404.html",
-      "statusCode": 404
-    }
+  "mimeTypes": {
+    ".json": "application/json",
+    ".js": "text/javascript",
+    ".css": "text/css"
   },
   "platform": {
     "apiRuntime": "node:18"

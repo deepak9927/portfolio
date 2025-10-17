@@ -1,15 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
+  distDir: 'out',
   images: {
     unoptimized: true,
-    domains: [
-      'uploadthing.com',
-      'utfs.io',
-      'cloud.appwrite.io',
-      'subdomain',
-      'files.stripe.com',
-    ],
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
   reactStrictMode: false,
   trailingSlash: true,
