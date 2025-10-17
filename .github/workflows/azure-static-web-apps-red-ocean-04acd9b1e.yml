@@ -13,6 +13,9 @@ jobs:
   build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
+    env:
+      # allow npm to install with legacy peer deps in case any action runs `npm ci`
+      NPM_CONFIG_LEGACY_PEER_DEPS: 'true'
     name: Build and Deploy Job
     steps:
       - uses: actions/checkout@v3
@@ -34,6 +37,12 @@ jobs:
           cat package.json || true
           echo "--- repo root listing ---"
           ls -la || true
+
+      - name: Ensure npm will use legacy peer deps (diagnostic)
+        run: |
+          npm config get legacy-peer-deps || true
+          npm config set legacy-peer-deps true
+          echo "npm legacy-peer-deps set to:" $(npm config get legacy-peer-deps)
 
       - name: Install dependencies (clean)
         run: |
