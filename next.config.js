@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
   images: {
+    unoptimized: true,
     domains: [
       'uploadthing.com',
       'utfs.io',
@@ -10,6 +12,7 @@ const nextConfig = {
     ],
   },
   reactStrictMode: false,
+  trailingSlash: true,
 }
 
 module.exports = nextConfig
