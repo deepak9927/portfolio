@@ -28,41 +28,9 @@ jobs:
         with:
           node-version: '18'
       
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Show package.json (diagnostic)
+      - name: Install dependencies
         run: |
-          echo "--- package.json ---"
-          cat package.json || true
-          echo "--- git HEAD and package.json from git ---"
-          git rev-parse --short HEAD || true
-          git show HEAD:package.json || true
-          echo "--- git status ---"
-          git status --porcelain || true
-          echo "--- repo root listing ---"
-          ls -la || true
-
-      - name: Ensure npm will use legacy peer deps (diagnostic)
-        run: |
-          npm config get legacy-peer-deps || true
-          npm config set legacy-peer-deps true
-          echo "npm legacy-peer-deps set to:" $(npm config get legacy-peer-deps)
-
-      - name: Install dependencies (clean)
-        run: |
-          # remove any lockfiles that could force npm ci or conflicting installs
-          rm -f package-lock.json pnpm-lock.yaml yarn.lock
-          rm -rf node_modules
-          # Try npm install with legacy-peer-deps first to avoid ERESOLVE from npm ci
-          npm ci --legacy-peer-deps || npm install --legacy-peer-deps || true
-
-          # Diagnostic: show if uploadthing or @uploadthing/react are present after npm install
-          echo "--- npm ls for uploadthing packages ---"
-          npm ls uploadthing @uploadthing/react --all || true
-
-          # Then run pnpm install to get expected pnpm environment (if you prefer pnpm tooling)
-          pnpm install
+          npm ci --legacy-peer-deps
       
       - name: Build Next.js app
         run: npm run build
