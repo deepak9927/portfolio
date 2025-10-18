@@ -106,7 +106,7 @@ export default function SignInPage() {
               )}
             </Button>
             <p className="text-sm text-codedex-400 text-center">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link href="/sign-up" className="text-codedex-400 hover:text-codedex-300 font-semibold">
                 Sign Up
               </Link>
