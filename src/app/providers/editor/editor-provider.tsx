@@ -3,6 +3,14 @@ import { EditorBtns } from '@/lib/constants'
 import { EditorAction } from './editor-actions'
 import { Dispatch, createContext, useContext, useReducer } from 'react'
 
+// Define a specific type for page details to replace 'any'
+// TODO: Flesh out this type with the actual properties of pageDetails
+export type PageDetails = {
+  id: string;
+  name: string;
+  // Add other properties as needed
+};
+
 export type DeviceTypes = 'Desktop' | 'Mobile' | 'Tablet'
 
 export type EditorElement = {
@@ -130,18 +138,18 @@ const editorReducer = (
   action: EditorAction
 ): EditorState => {
   switch (action.type) {
+    // Adds a new element to the editor
     case 'ADD_ELEMENT':
       const updatedEditorState = {
         ...state.editor,
         elements: addAnElement(state.editor.elements, action),
       }
-      // Update the history to include the entire updated EditorState
       const updatedHistory = [
         ...state.history.history.slice(0, state.history.currentIndex + 1),
-        { ...updatedEditorState }, // Save a copy of the updated state
+        { ...updatedEditorState },
       ]
 
-      const newEditorState = {
+      return {
         ...state,
         editor: updatedEditorState,
         history: {
@@ -151,12 +159,9 @@ const editorReducer = (
         },
       }
 
-      return newEditorState
-
+    // Updates an existing element in the editor
     case 'UPDATE_ELEMENT':
-      // Perform your logic to update the element in the state
       const updatedElements = updateAnElement(state.editor.elements, action)
-
       const UpdatedElementIsSelected =
         state.editor.selectedElement.id === action.payload.elementDetails.id
 
@@ -165,20 +170,15 @@ const editorReducer = (
         elements: updatedElements,
         selectedElement: UpdatedElementIsSelected
           ? action.payload.elementDetails
-          : {
-              id: '',
-              content: [],
-              name: '',
-              styles: {},
-              type: null,
-            },
+          : state.editor.selectedElement,
       }
 
       const updatedHistoryWithUpdate = [
         ...state.history.history.slice(0, state.history.currentIndex + 1),
-        { ...updatedEditorStateWithUpdate }, // Save a copy of the updated state
+        { ...updatedEditorStateWithUpdate },
       ]
-      const updatedEditor = {
+
+      return {
         ...state,
         editor: updatedEditorStateWithUpdate,
         history: {
@@ -187,10 +187,9 @@ const editorReducer = (
           currentIndex: updatedHistoryWithUpdate.length - 1,
         },
       }
-      return updatedEditor
 
+    // Deletes an element from the editor
     case 'DELETE_ELEMENT':
-      // Perform your logic to delete the element from the state
       const updatedElementsAfterDelete = deleteAnElement(
         state.editor.elements,
         action
@@ -199,12 +198,13 @@ const editorReducer = (
         ...state.editor,
         elements: updatedElementsAfterDelete,
       }
+
       const updatedHistoryAfterDelete = [
         ...state.history.history.slice(0, state.history.currentIndex + 1),
-        { ...updatedEditorStateAfterDelete }, // Save a copy of the updated state
+        { ...updatedEditorStateAfterDelete },
       ]
 
-      const deletedState = {
+      return {
         ...state,
         editor: updatedEditorStateAfterDelete,
         history: {
@@ -213,95 +213,78 @@ const editorReducer = (
           currentIndex: updatedHistoryAfterDelete.length - 1,
         },
       }
-      return deletedState
 
+    // Sets the currently clicked element
     case 'CHANGE_CLICKED_ELEMENT':
-      const clickedState = {
+      return {
         ...state,
         editor: {
           ...state.editor,
-          selectedElement: action.payload.elementDetails || {
-            id: '',
-            content: [],
-            name: '',
-            styles: {},
-            type: null,
-          },
-        },
-        history: {
-          ...state.history,
-          history: [
-            ...state.history.history.slice(0, state.history.currentIndex + 1),
-            { ...state.editor }, // Save a copy of the current editor state
-          ],
-          currentIndex: state.history.currentIndex + 1,
+          selectedElement: action.payload.elementDetails || initialEditorState.selectedElement,
         },
       }
-      return clickedState
+
+    // Changes the device view (Desktop, Mobile, Tablet)
     case 'CHANGE_DEVICE':
-      const changedDeviceState = {
+      return {
         ...state,
         editor: {
           ...state.editor,
           device: action.payload.device,
         },
       }
-      return changedDeviceState
 
+    // Toggles the preview mode
     case 'TOGGLE_PREVIEW_MODE':
-      const toggleState = {
+      return {
         ...state,
         editor: {
           ...state.editor,
           previewMode: !state.editor.previewMode,
         },
       }
-      return toggleState
 
+    // Toggles the live mode
     case 'TOGGLE_LIVE_MODE':
-      const toggleLiveMode: EditorState = {
+      return {
         ...state,
         editor: {
           ...state.editor,
-          liveMode: action.payload
-            ? action.payload.value
-            : !state.editor.liveMode,
+          liveMode: action.payload?.value ?? !state.editor.liveMode,
         },
       }
-      return toggleLiveMode
 
+    // Redoes the last action
     case 'REDO':
       if (state.history.currentIndex < state.history.history.length - 1) {
         const nextIndex = state.history.currentIndex + 1
-        const nextEditorState = { ...state.history.history[nextIndex] }
-        const redoState = {
+        return {
           ...state,
-          editor: nextEditorState,
+          editor: state.history.history[nextIndex],
           history: {
             ...state.history,
             currentIndex: nextIndex,
           },
         }
-        return redoState
       }
       return state
 
+    // Undoes the last action
     case 'UNDO':
       if (state.history.currentIndex > 0) {
         const prevIndex = state.history.currentIndex - 1
-        const prevEditorState = { ...state.history.history[prevIndex] }
-        const undoState = {
+        return {
           ...state,
-          editor: prevEditorState,
+          editor: state.history.history[prevIndex],
           history: {
             ...state.history,
             currentIndex: prevIndex,
           },
         }
-        return undoState
       }
       return state
 
+    // Loads data into the editor
     case 'LOAD_DATA':
       return {
         ...initialState,
@@ -311,7 +294,6 @@ const editorReducer = (
           liveMode: !!action.payload.withLive,
         },
       }
-
 
     default:
       return state
@@ -330,7 +312,7 @@ export const EditorContext = createContext<{
   dispatch: Dispatch<EditorAction>
   subaccountId: string
   funnelId: string
-  pageDetails: any | null
+  pageDetails: PageDetails | null
 }>({
   state: initialState,
   dispatch: () => undefined,
@@ -343,7 +325,7 @@ type EditorProps = {
   children: React.ReactNode
   subaccountId: string
   funnelId: string
-  pageDetails: any
+  pageDetails: PageDetails
 }
 
 const EditorProvider = (props: EditorProps) => {
