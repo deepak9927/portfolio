@@ -2,7 +2,6 @@
 import { EditorBtns } from '@/lib/constants'
 import { EditorAction } from './editor-actions'
 import { Dispatch, createContext, useContext, useReducer } from 'react'
-import { FunnelPage } from '@prisma/client'
 
 export type DeviceTypes = 'Desktop' | 'Mobile' | 'Tablet'
 
@@ -20,7 +19,6 @@ export type Editor = {
   selectedElement: EditorElement
   device: DeviceTypes
   previewMode: boolean
-  funnelPageId: string
 }
 
 export type HistoryState = {
@@ -53,7 +51,6 @@ const initialEditorState: EditorState['editor'] = {
   device: 'Desktop',
   previewMode: false,
   liveMode: false,
-  funnelPageId: '',
 }
 
 const initialHistoryState: HistoryState = {
@@ -315,28 +312,6 @@ const editorReducer = (
         },
       }
 
-    case 'SET_FUNNELPAGE_ID':
-      const { funnelPageId } = action.payload
-      const updatedEditorStateWithFunnelPageId = {
-        ...state.editor,
-        funnelPageId,
-      }
-
-      const updatedHistoryWithFunnelPageId = [
-        ...state.history.history.slice(0, state.history.currentIndex + 1),
-        { ...updatedEditorStateWithFunnelPageId }, // Save a copy of the updated state
-      ]
-
-      const funnelPageIdState = {
-        ...state,
-        editor: updatedEditorStateWithFunnelPageId,
-        history: {
-          ...state.history,
-          history: updatedHistoryWithFunnelPageId,
-          currentIndex: updatedHistoryWithFunnelPageId.length - 1,
-        },
-      }
-      return funnelPageIdState
 
     default:
       return state
@@ -355,7 +330,7 @@ export const EditorContext = createContext<{
   dispatch: Dispatch<EditorAction>
   subaccountId: string
   funnelId: string
-  pageDetails: FunnelPage | null
+  pageDetails: any | null
 }>({
   state: initialState,
   dispatch: () => undefined,
@@ -368,7 +343,7 @@ type EditorProps = {
   children: React.ReactNode
   subaccountId: string
   funnelId: string
-  pageDetails: FunnelPage
+  pageDetails: any
 }
 
 const EditorProvider = (props: EditorProps) => {

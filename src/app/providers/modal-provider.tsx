@@ -1,7 +1,28 @@
 'use client'
 import { PricesList, TicketDetails } from '@/lib/types'
-import { Agency, Contact, Plan, User } from '@prisma/client'
 import { createContext, useContext, useEffect, useState } from 'react'
+
+// Define local types to remove Prisma dependency
+export type User = {
+  id: string
+  name: string
+  email: string
+  image: string
+}
+
+export type Agency = {
+  id: string
+  name: string
+  users: User[]
+}
+
+export type Contact = {
+  id: string
+  name: string
+  email: string
+}
+
+export type Plan = 'price_1' | 'price_2' | 'price_3'
 
 interface ModalProviderProps {
   children: React.ReactNode
