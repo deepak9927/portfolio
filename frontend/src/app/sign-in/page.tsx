@@ -1,11 +1,12 @@
+import React from 'react';
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
+import { useAuth } from '../../contexts/AuthContext';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
+import { Label } from '../../components/ui/label';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Sparkles, Rocket } from 'lucide-react';
@@ -24,10 +25,14 @@ export default function SignInPage() {
     setLoading(true);
 
     try {
-      await login(email, password);
-      router.push('/');
+      const user = await login(email, password);
+      if (user) {
+        router.push('/');
+      } else {
+        setError('Invalid credentials');
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in');
+      setError(err.message || 'Invalid credentials');
     } finally {
       setLoading(false);
     }
@@ -106,7 +111,7 @@ export default function SignInPage() {
               )}
             </Button>
             <p className="text-sm text-codedex-400 text-center">
-              Don&apos;t have an account?{' '}
+              Don't have an account?{' '}
               <Link href="/sign-up" className="text-codedex-400 hover:text-codedex-300 font-semibold">
                 Sign Up
               </Link>

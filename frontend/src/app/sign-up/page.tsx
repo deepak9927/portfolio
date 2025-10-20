@@ -1,11 +1,12 @@
+import React from 'react';
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
+import { useAuth } from '../../contexts/AuthContext';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
+import { Label } from '../../components/ui/label';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Sparkles, Rocket } from 'lucide-react';
@@ -25,10 +26,14 @@ export default function SignUpPage() {
     setLoading(true);
 
     try {
-      await signup(email, password, name);
-      router.push('/');
+      const user = await signup(email, password, name);
+      if (user) {
+        router.push('/');
+      } else {
+        setError('Signup failed');
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to sign up');
+      setError(err.message || 'Signup failed');
     } finally {
       setLoading(false);
     }

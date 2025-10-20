@@ -6,9 +6,10 @@ import { authService, User } from '@/lib/auth';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, name: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User | null>;
+  signup: (email: string, password: string, name: string) => Promise<User | null>;
   logout: () => Promise<void>;
+  getToken: () => string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,7 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   async function checkUser() {
     try {
       const currentUser = await authService.getCurrentUser();
-      setUser(currentUser as User);
+      setUser(currentUser);
     } catch (error) {
       setUser(null);
     } finally {
@@ -33,13 +34,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function login(email: string, password: string) {
-    await authService.login(email, password);
+    const loggedInUser = await authService.login(email, password);
     await checkUser();
+    return loggedInUser;
   }
 
   async function signup(email: string, password: string, name: string) {
-    await authService.createAccount(email, password, name);
+    const newUser = await authService.createAccount(email, password, name);
     await checkUser();
+    return newUser;
   }
 
   async function logout() {
@@ -48,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, getToken: authService.getToken }}>
       {children}
     </AuthContext.Provider>
   );
